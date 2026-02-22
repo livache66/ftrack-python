@@ -29,6 +29,12 @@ jobs:
           project_schema = session.query('ProjectSchema').first()
           print('Using project schema:', project_schema['name'])
 
+          existing = session.query('Project where name is "GiTproject"').first()
+          if existing:
+              session.delete(existing)
+              session.commit()
+              print('Deleted existing GiTproject')
+
           project = session.create('Project', {
               'name': 'GiTproject',
               'full_name': 'GiTproject',
@@ -37,13 +43,9 @@ jobs:
           print('Created project:', project['name'])
 
           task_type_names = ['Layout', 'Animation', 'Render', 'Compositing']
-          task_types = {}
-          for name in task_type_names:
-              task_type = session.query('TaskType where name is \"{}\"'.format(name)).first()
-              if task_type:
-                  task_types[name] = task_type
-              else:
-                  print('Warning: task type \"{}\" not found, skipping'.format(name))
+          all_task_types = project_schema.get_types('Task')
+          print('Available task types:', [t['name'] for t in all_task_types])
+          task_types = {t['name']: t for t in all_task_types if t['name'] in task_type_names}
 
           for i in range(1, 4):
               shot = session.create('Shot', {'name': str(i), 'parent': project})
