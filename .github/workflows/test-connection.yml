@@ -19,9 +19,9 @@ jobs:
           PYTHONPATH=source python -c "
           import os, ftrack_api
           session = ftrack_api.Session(
-              server_url=os.environ['FTRACK_SERVER'],
-              api_key=os.environ['FTRACK_API_KEY'],
-              api_user=os.environ['FTRACK_API_USER']
+              server_url=os.environ['FTRACK_SERVER'].strip(),
+              api_key=os.environ['FTRACK_API_KEY'].strip(),
+              api_user=os.environ['FTRACK_API_USER'].strip()
           )
           print('Connected to', session.server_url)
           "
