@@ -1,0 +1,59 @@
+name: Create ftrack Project
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install ftrack-python-api
+        run: |
+          pip install requests "arrow>=0.4.4,<1" "pyparsing>=2.0,<3" "clique==1.6.1" "websocket-client>=0.40.0,<1" "platformdirs>=4.0.0,<5"
+      - name: Create project
+        run: |
+          export FTRACK_API_KEY=$(echo -n "$FTRACK_API_KEY" | tr -d '\n\r')
+          PYTHONPATH=source python -c "
+          import os, ftrack_api
+
+          session = ftrack_api.Session(
+              server_url='https://staticvfx.ftrackapp.com',
+              api_key=os.environ['FTRACK_API_KEY'],
+              api_user='liviu@staticvfx.com'
+          )
+
+          project_schema = session.query('ProjectSchema').first()
+          print('Using project schema:', project_schema['name'])
+
+          project = session.create('Project', {
+              'name': 'GiTproject',
+              'full_name': 'GiTproject',
+              'project_schema': project_schema
+          })
+          print('Created project:', project['name'])
+
+          task_type_names = ['Layout', 'Animation', 'Render', 'Compositing']
+          task_types = {}
+          for name in task_type_names:
+              task_type = session.query('TaskType where name is \"{}\"'.format(name)).first()
+              if task_type:
+                  task_types[name] = task_type
+              else:
+                  print('Warning: task type \"{}\" not found, skipping'.format(name))
+
+          for i in range(1, 4):
+              shot = session.create('Shot', {'name': str(i), 'parent': project})
+              print('  Created shot:', shot['name'])
+              for task_name, task_type in task_types.items():
+                  task = session.create('Task', {'name': task_name, 'parent': shot, 'type': task_type})
+                  print('    Created task:', task['name'])
+
+          session.commit()
+          print('Done! Project GiTproject created successfully.')
+          "
+        env:
+          FTRACK_API_KEY: ${{ secrets.FTRACK_API_KEY }}

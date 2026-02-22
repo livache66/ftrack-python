@@ -46,3 +46,4 @@ test-reports/*
 
 # Local scripts with credentials
 tests/connect.py
+tests/create_project.py
