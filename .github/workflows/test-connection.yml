@@ -20,13 +20,12 @@ jobs:
           import os, ftrack_api
           session = ftrack_api.Session(
               server_url=os.environ['FTRACK_SERVER'],
-              api_key=os.environ['FTRACK_API_KEY_UNITTEST'],
+              api_key=os.environ['FTRACK_API_KEY'],
               api_user=os.environ['FTRACK_API_USER']
           )
           print('Connected to', session.server_url)
           "
         env:
           FTRACK_SERVER: ${{ secrets.FTRACK_SERVER }}
-          FTRACK_API_KEY: ${{ secrets.FTRACK_API_KEY_UNITTEST }}
-          FTRACK_API_KEY_UNITTEST: ${{ secrets.FTRACK_API_KEY_UNITTEST }}
+          FTRACK_API_KEY: ${{ secrets.FTRACK_API_KEY }}
           FTRACK_API_USER: ${{ secrets.FTRACK_API_USER }}
