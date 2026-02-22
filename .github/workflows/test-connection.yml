@@ -20,7 +20,7 @@ jobs:
           import os, ftrack_api
           session = ftrack_api.Session(
               server_url=os.environ['FTRACK_SERVER'],
-              api_key=os.environ['FTRACK_API_KEY'],
+              api_key=os.environ['FTRACK_API_KEY_UNITTEST'],
               api_user=os.environ['FTRACK_API_USER']
           )
           print('Connected to', session.server_url)
