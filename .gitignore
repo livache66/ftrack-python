@@ -43,3 +43,6 @@ Thumbs.db
 .cache
 test-reports/*
 .pytest_cache/*
+
+# Local scripts with credentials
+tests/connect.py
