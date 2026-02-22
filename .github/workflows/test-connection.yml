@@ -13,11 +13,10 @@ jobs:
           python-version: "3.9"
       - name: Install ftrack-python-api
         run: |
-          curl -sSL https://install.python-poetry.org | python
-          poetry install
+          pip install requests "arrow>=0.4.4,<1" "pyparsing>=2.0,<3" "clique==1.6.1" "websocket-client>=0.40.0,<1" "platformdirs>=4.0.0,<5"
       - name: Test connection
         run: |
-          poetry run python -c "
+          PYTHONPATH=source python -c "
           import os, ftrack_api
           session = ftrack_api.Session(
               server_url=os.environ['FTRACK_SERVER'],
