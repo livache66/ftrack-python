@@ -1,0 +1,30 @@
+name: Test ftrack Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install ftrack-python-api
+        run: pip install -e .
+      - name: Test connection
+        run: |
+          python -c "
+          import os, ftrack_api
+          session = ftrack_api.Session(
+              server_url=os.environ['FTRACK_SERVER'],
+              api_key=os.environ['FTRACK_API_KEY'],
+              api_user=os.environ['FTRACK_API_USER']
+          )
+          print('Connected to', session.server_url)
+          "
+        env:
+          FTRACK_SERVER: ${{ secrets.FTRACK_SERVER }}
+          FTRACK_API_KEY: ${{ secrets.FTRACK_API_KEY_UNITTEST }}
+          FTRACK_API_USER: ${{ secrets.FTRACK_API_USER }}
