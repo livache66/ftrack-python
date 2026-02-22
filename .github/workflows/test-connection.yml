@@ -16,12 +16,15 @@ jobs:
           pip install requests "arrow>=0.4.4,<1" "pyparsing>=2.0,<3" "clique==1.6.1" "websocket-client>=0.40.0,<1" "platformdirs>=4.0.0,<5"
       - name: Test connection
         run: |
+          export FTRACK_SERVER=$(echo -n "$FTRACK_SERVER" | tr -d '\n\r')
+          export FTRACK_API_KEY=$(echo -n "$FTRACK_API_KEY" | tr -d '\n\r')
+          export FTRACK_API_USER=$(echo -n "$FTRACK_API_USER" | tr -d '\n\r')
           PYTHONPATH=source python -c "
           import os, ftrack_api
           session = ftrack_api.Session(
-              server_url=os.environ['FTRACK_SERVER'].strip(),
-              api_key=os.environ['FTRACK_API_KEY'].strip(),
-              api_user=os.environ['FTRACK_API_USER'].strip()
+              server_url=os.environ['FTRACK_SERVER'],
+              api_key=os.environ['FTRACK_API_KEY'],
+              api_user=os.environ['FTRACK_API_USER']
           )
           print('Connected to', session.server_url)
           "
